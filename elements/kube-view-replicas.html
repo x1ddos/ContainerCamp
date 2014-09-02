@@ -1,0 +1,19 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="kube-replc.html">
+
+<polymer-element name="kube-view-replicas" attributes="baseurl">
+  <template>
+    <core-ajax url="{{baseurl}}/api/v1beta1/replicationControllers"
+               handleAs="json" response="{{data}}" auto>
+    </core-ajax>
+    <template repeat="{{item in data.items}}">
+      <kube-replc rid="{{item.id}}" data="{{item}}" baseurl="{{baseurl}}"></kube-pod>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      baseurl: 'http://localhost:8001'
+    });
+  </script>
+</polymer-element>

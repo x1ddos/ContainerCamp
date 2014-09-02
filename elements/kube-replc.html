@@ -1,0 +1,75 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+
+<link rel="import" href="kube-card.html">
+
+<polymer-element name="kube-replc" attributes="rid data baseurl">
+  <template>
+    <link rel="stylesheet" href="kube-replc.css">
+
+    <core-ajax id="req" 
+               url="{{baseurl}}/api/v1beta1/replicationControllers/{{rid}}"
+               handleAs="json" response="{{data}}">
+    </core-ajax>
+
+    <kube-card icon="apps" top="{{data.id}}">
+      <main>
+        Replicas: {{data.desiredState.replicas}}<br/>
+        Selector: {{data.desiredState.replicaSelector | labels}}<br/>
+
+        <ul class="bullets">
+          <template repeat="{{c in data.desiredState.podTemplate.desiredState.manifest.containers}}">
+            <li>
+              {{c.name}}<br/>
+              <span class="secondary smaller">{{c.image}}</span><br/>
+              <span class="secondary smaller">{{c.ports | cPorts}}</span>
+            </li>
+          </template>
+        </ul>
+      </main>
+
+      <template repeat="{{k in data.labels | keys}}">
+        <div class="smaller label item">
+          <span class="label name">{{k}}
+          </span><span class="label value">{{data.labels[k]}}</span>
+        </div>
+      </template>
+
+      <bottom>{{data.creationTimestamp | date}}</bottom>
+    </kube-card>
+  </template>
+
+  <script>
+    Polymer({
+      baseurl: 'http://localhost:8001',
+
+      ready: function() {
+        if (!this.data) {
+          this.$.req.go();
+        }
+      },
+
+      date: function(v) {
+        return v ? new Date(v).toLocaleString() : null;
+      },
+      keys: function(obj) {
+        return obj ? Object.keys(obj) : [];
+      },
+      labels: function(obj) {
+        var labels = [];
+        for (var k in obj) {
+          labels.push(k + '=' + obj[k]);
+        }
+        return labels.join(', ');
+      },
+      cPorts: function(items) {
+        var ports = [];
+        for (var i=0, p; p = items[i]; i++) {
+          ports.push(p.hostPort + ':' + p.containerPort);
+        };
+        return ports.join(', ');
+      }
+    });
+  </script>
+</polymer-element>

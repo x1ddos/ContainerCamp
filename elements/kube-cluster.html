@@ -2,7 +2,9 @@
 <link rel="import" href="../bower_components/core-selector/core-selector.html">
 <link rel="import" href="../bower_components/core-icons/core-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="kube-view-pods.html">
+<link rel="import" href="kube-view-replicas.html">
 
 <polymer-element name="kube-cluster" attributes="baseurl view">
   <template>
@@ -16,10 +18,10 @@
     </core-selector>
 
     <template if="{{view == 'pods'}}">
-      <kube-view-pods baseurl="http://localhost:8001"></kube-view-pods>
+      <kube-view-pods baseurl="{{baseurl}}"></kube-view-pods>
     </template>
     <template if="{{view == 'replicationControllers'}}">
-      TODO: replicationControllers view
+      <kube-view-replicas baseurl="{{baseurl}}"></kube-view-replicas>
     </template>
     <template if="{{view == 'services'}}">
       TODO: services view
