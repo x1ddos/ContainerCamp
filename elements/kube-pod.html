@@ -4,11 +4,11 @@
 
 <link rel="import" href="kube-card.html">
 
-<polymer-element name="kube-pod" attributes="pid">
+<polymer-element name="kube-pod" attributes="pid baseurl">
   <template>
     <link rel="stylesheet" href="kube-pod.css">
 
-    <core-ajax url="http://localhost:8001/api/v1beta1/pods/{{pid}}"
+    <core-ajax url="{{baseurl}}/api/v1beta1/pods/{{pid}}"
                handleAs="json" response="{{data}}" auto>
     </core-ajax>
 
@@ -47,6 +47,8 @@
 
   <script>
     Polymer({
+      baseurl: 'http://localhost:8001',
+
       date: function(v) {
         return v ? new Date(v).toLocaleString() : null;
       },
