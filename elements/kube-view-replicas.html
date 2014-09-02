@@ -8,7 +8,7 @@
                handleAs="json" response="{{data}}" auto>
     </core-ajax>
     <template repeat="{{item in data.items}}">
-      <kube-replc rid="{{item.id}}" data="{{item}}" baseurl="{{baseurl}}"></kube-pod>
+      <kube-replc rid="{{item.id}}" data="{{item}}" baseurl="{{baseurl}}"></kube-replc>
     </template>
   </template>
   <script>
