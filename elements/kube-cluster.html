@@ -1,0 +1,32 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="kube-view-pods.html">
+
+<polymer-element name="kube-cluster" attributes="baseurl view">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template if="{{view == 'pods'}}">
+      <kube-view-pods baseurl="http://localhost:8001"></kube-view-pods>
+    </template>
+    <template if="{{view == 'relicationControllers'}}">
+      TODO: replicationControllers view
+    </template>
+    <template if="{{view == 'services'}}">
+      TODO: services view
+    </template>
+    <template if="{{view == 'minions'}}">
+      TODO: minions (VMs) view
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      view: 'pods'  
+    });
+  </script>
+</polymer-element>

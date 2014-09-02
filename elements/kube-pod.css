@@ -1,0 +1,78 @@
+kube-card.Terminated::shadow paper-item::shadow core-icon {
+  fill: #e51c23; /* red */
+}
+
+kube-card.Running::shadow paper-item::shadow core-icon {
+  fill: #259b24; /* green */
+}
+
+kube-card.Waiting::shadow paper-item::shadow core-icon {
+  fill: #ffeb3b; /* yellow */
+}
+
+.bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.bullets > li {
+  padding-left: 1em;
+  text-indent: -.9em;
+  margin-top: 0.5em;
+}
+
+ul.bullets > li:before {
+  content: "\0025CF";
+}
+
+ul.bullets > li.running:before {
+    color: #259b24; /* green */
+}
+
+ul.bullets > li.paused:before {
+    color: #ffeb3b; /* yellow */
+}
+
+ul.bullets > li.stopped:before {
+    color: #e51c23; /* red */
+}
+
+.d {
+  color: rgba(0, 0, 0, 0.12);
+}
+
+.secondary {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.smaller {
+  font-size: smaller;
+}
+
+.label.item {
+  text-align: right;
+}
+
+.label.name, .label.value {
+  display: inline-block;
+  background-color: #ff9800;
+  padding: 2px 7px 3px;
+  margin: 1px 0;
+}
+
+.label.name {
+  color: white;
+  background-color: #ef6c00;
+}
+
+.label.value {
+  background-color: #ff9800;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

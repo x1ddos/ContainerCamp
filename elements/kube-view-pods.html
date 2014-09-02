@@ -1,0 +1,19 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="kube-pod.html">
+
+<polymer-element name="kube-view-pods" attributes="baseurl">
+  <template>
+    <core-ajax url="{{baseurl}}/api/v1beta1/pods"
+               handleAs="json" response="{{data}}" auto>
+    </core-ajax>
+    <template repeat="{{data.items}}">
+      <kube-pod pid="{{id}}"></kube-pod>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      baseurl: 'http://localhost:8001'
+    });
+  </script>
+</polymer-element>

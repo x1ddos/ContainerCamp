@@ -1,0 +1,22 @@
+{
+  "name": "ContainerCamp",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "polymer": "~0.4.0",
+    "platform": "~1.2.0",
+    "core-ajax": "Polymer/core-ajax#~0.4.0",
+    "core-icons": "Polymer/core-icons#~0.4.0",
+    "paper-shadow": "Polymer/paper-shadow#~0.4.0",
+    "paper-item": "Polymer/paper-item#~0.4.0",
+    "paper-slider": "Polymer/paper-slider#~0.4.0"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

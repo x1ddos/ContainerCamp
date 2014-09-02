@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- Copyright (c) 2014 Google Inc. All rights reserved. -->
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>kube-card Demo</title>
+  <script src="bower_components/platform/platform.js"></script>
+  <link rel="import" href="bower_components/core-icons/core-icons.html">
+  <link rel="import" href="bower_components/paper-slider/paper-slider.html">
+  <link rel="import" href="elements/kube-card.html">
+  <style>
+    body {
+      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <kube-card id="zcard" title="Card demo" icon="check-circle-blank" z="1">
+    <main>
+      <p>This is main card body</p>
+      <paper-slider min="0" max="5" step="1" value="1" snaps></paper-slider>
+    </main>
+    <bottom>1/9/2014 10:30 AM</bottom>
+  </kube-card>
+
+  <kube-card title="Second card" icon="check-circle-blank">
+    <main>Hello, second card with default shadow (1).</main>
+    Raw / unpadded remainder of the card content.
+    <bottom>Bottom of the card</bottom>
+  </kube-card>
+
+  <kube-card title="Card with a very very very very very very long title" icon="home">
+    <main>This card should have it's title truncated with ellipsis.</main>
+  </kube-card>
+
+  <script>
+    window.addEventListener('polymer-ready', function(e) {
+      var slider = document.querySelector('kube-card paper-slider');
+      var zcard = document.querySelector('#zcard');
+      slider.addEventListener('core-change', function(){
+        zcard.setAttribute('z', slider.value);
+      });
+    });
+  </script>
+
+</body>
+</html>

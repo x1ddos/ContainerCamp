@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+
+<link rel="import" href="kube-card.html">
+
+<polymer-element name="kube-pod" attributes="pid">
+  <template>
+    <link rel="stylesheet" href="kube-pod.css">
+
+    <core-ajax url="http://localhost:8001/api/v1beta1/pods/{{pid}}"
+               handleAs="json" response="{{data}}" auto>
+    </core-ajax>
+
+    <kube-card class="{{data.currentState.status}}" icon="check-circle-blank"
+               top="{{data.id}}">
+      <main>
+        <div class="truncate">
+          {{data.currentState.host || "Not deployed"}}
+        </div>
+        <template if="{{data.currentState.host}}">
+          {{data.currentState.hostIP}} <span class="d">/</span>
+          <span class="secondary">{{data.currentState.podIP}}</span>
+        </template>
+
+        <ul class="bullets">
+          <template repeat="{{c in data.desiredState.manifest.containers}}">
+            <li class="{{data.currentState.info[c.name].State | cStatus}}">
+              {{c.name}}<br/>
+              <span class="secondary smaller">{{c.image}}</span><br/>
+              <span class="secondary smaller">{{c.ports | cPorts}}</span>
+            </li>
+          </template>
+        </ul>
+      </main>
+
+      <template repeat="{{k in data.labels | keys}}">
+        <div class="smaller label item">
+          <span class="label name">{{k}}
+          </span><span class="label value">{{data.labels[k]}}</span>
+        </div>
+      </template>
+
+      <bottom>{{data.creationTimestamp | date}}</bottom>
+    </kube-card>
+  </template>
+
+  <script>
+    Polymer({
+      date: function(v) {
+        return v ? new Date(v).toLocaleString() : null;
+      },
+      keys: function(obj) {
+        return obj ? Object.keys(obj) : [];
+      },
+      cPorts: function(items) {
+        var ports = [];
+        for (var i=0, p; p = items[i]; i++) {
+          ports.push(p.hostPort + ':' + p.containerPort);
+        };
+        return ports.join(', ');
+      },
+      cStatus: function(state) {
+        if (!state || !state.Running) return "stopped";
+        return state.Paused ? "paused" : "running";
+      }
+    });
+  </script>
+</polymer-element>

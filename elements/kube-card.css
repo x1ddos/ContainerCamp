@@ -1,0 +1,41 @@
+:host {
+  display: inline-block;
+  vertical-align: top;
+  background: white;
+  width: 33%;
+  min-width: 300px;
+  max-width: 400px;
+  position: relative;
+  margin: 16px;
+  border-radius: 2px;
+  padding-bottom: 35px;
+}
+
+:host > .bottom {
+  display: inline-block;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+:host > paper-item.title {
+  background-color: #5677fc;
+  color: white;
+}
+
+:host > paper-item::shadow #label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host > .main {
+  padding: 10px;
+}
+
+.secondary {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.smaller {
+  font-size: smaller;
+}

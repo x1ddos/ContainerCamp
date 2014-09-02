@@ -1,0 +1,31 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-shadow/paper-shadow.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+<polymer-element name="kube-card" attributes="top icon iconSrc z">
+  <template>
+    <link rel="stylesheet" href="kube-card.css">
+
+    <paper-item label="{{top}}" class="title"
+                icon="{{icon}}" iconSrc="{{iconSrc}}">
+      <content select="top"></content>
+    </paper-item>
+
+    <div class="main">
+      <content select="main"></content>
+    </div>
+
+    <span class="secondary smaller bottom">
+      <content select="bottom"></content>
+    </span>
+
+    <content></content>
+
+    <paper-shadow z="{{z}}"></paper-shadow>
+  </template>
+  <script>
+    Polymer({
+      z: 1
+    });
+  </script>
+</polymer-element>
