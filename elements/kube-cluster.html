@@ -1,18 +1,24 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-selector/core-selector.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="kube-view-pods.html">
 
 <polymer-element name="kube-cluster" attributes="baseurl view">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
+    <link rel="stylesheet" href="kube-cluster.css">
+
+    <core-selector valueattr="view" selected="{{view}}" id="nav">
+      <paper-icon-button view="pods" fill isToggle icon="group-work"></paper-icon-button>
+      <paper-icon-button view="replicationControllers" fill isToggle icon="apps"></paper-icon-button>
+      <paper-icon-button view="services" fill isToggle icon="settings-ethernet"></paper-icon-button>
+      <paper-icon-button view="minions" fill isToggle icon="cloud"></paper-icon-button>
+    </core-selector>
 
     <template if="{{view == 'pods'}}">
       <kube-view-pods baseurl="http://localhost:8001"></kube-view-pods>
     </template>
-    <template if="{{view == 'relicationControllers'}}">
+    <template if="{{view == 'replicationControllers'}}">
       TODO: replicationControllers view
     </template>
     <template if="{{view == 'services'}}">
@@ -26,7 +32,7 @@
 
   <script>
     Polymer({
-      view: 'pods'  
+      view: 'pods',
     });
   </script>
 </polymer-element>
