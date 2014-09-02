@@ -1,0 +1,65 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+
+<link rel="import" href="kube-card.html">
+
+<polymer-element name="kube-service" attributes="sid data baseurl">
+  <template>
+    <link rel="stylesheet" href="kube-service.css">
+
+    <core-ajax id="req" 
+               url="{{baseurl}}/api/v1beta1/services/{{sid}}"
+               handleAs="json" response="{{data}}">
+    </core-ajax>
+
+    <kube-card icon="settings-ethernet" top="{{data.id}}">
+      <main>
+        {{data.port}} &rsaquo; {{data.containerPort}}
+        <div class="tinyspace">
+          <template repeat="{{k in data.selector | keys}}">
+            <div class="smaller">
+              <span class="slabel name">{{k}}
+              </span><span class="slabel value">{{data.selector[k]}}</span>
+            </div>
+          </template>
+        </div>
+      </main>
+
+      <template repeat="{{k in data.labels | keys}}">
+        <div class="smaller label item">
+          <span class="label name">{{k}}
+          </span><span class="label value">{{data.labels[k]}}</span>
+        </div>
+      </template>
+
+      <bottom>{{data.creationTimestamp | date}}</bottom>
+    </kube-card>
+  </template>
+
+  <script>
+    Polymer({
+      baseurl: 'http://localhost:8001',
+
+      ready: function() {
+        if (!this.data) {
+          this.$.req.go();
+        }
+      },
+
+      date: function(v) {
+        return v ? new Date(v).toLocaleString() : null;
+      },
+      keys: function(obj) {
+        return obj ? Object.keys(obj) : [];
+      },
+      labels: function(obj) {
+        var labels = [];
+        for (var k in obj) {
+          labels.push(k + '=' + obj[k]);
+        }
+        return labels.join(', ');
+      }
+    });
+  </script>
+</polymer-element>

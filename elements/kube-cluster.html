@@ -5,6 +5,7 @@
 
 <link rel="import" href="kube-view-pods.html">
 <link rel="import" href="kube-view-replicas.html">
+<link rel="import" href="kube-view-services.html">
 
 <polymer-element name="kube-cluster" attributes="baseurl view">
   <template>
@@ -24,7 +25,7 @@
       <kube-view-replicas baseurl="{{baseurl}}"></kube-view-replicas>
     </template>
     <template if="{{view == 'services'}}">
-      TODO: services view
+      <kube-view-services baseurl="{{baseurl}}"></kube-view-services>
     </template>
     <template if="{{view == 'minions'}}">
       TODO: minions (VMs) view
