@@ -7,8 +7,8 @@
     <core-ajax url="{{baseurl}}/api/v1beta1/pods"
                handleAs="json" response="{{data}}" auto>
     </core-ajax>
-    <template repeat="{{data.items}}">
-      <kube-pod pid="{{id}}" baseurl="{{baseurl}}"></kube-pod>
+    <template repeat="{{item in data.items}}">
+      <kube-pod pid="{{item.id}}" data="{{item}}" baseurl="{{baseurl}}"></kube-pod>
     </template>
   </template>
   <script>
