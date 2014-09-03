@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/core-icons/core-icons.html">
 <link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
 
 <link rel="import" href="kube-card.html">
 
@@ -8,7 +9,7 @@
   <template>
     <link rel="stylesheet" href="kube-replc.css">
 
-    <core-ajax id="req" 
+    <core-ajax id="req"
                url="{{baseurl}}/api/v1beta1/replicationControllers/{{rid}}"
                handleAs="json" response="{{data}}">
     </core-ajax>
@@ -16,6 +17,11 @@
     <kube-card icon="apps" top="{{data.id}}">
       <main>
         <span class="circle">{{data.desiredState.replicas}}</span> replicas
+
+        <div class="top space">
+          <paper-slider pin snaps min="0" max="4" step="1"
+               value="{{data.desiredState.replicas}}"></paper-slider>
+        </div>
 
         <div class="top space">
           <template repeat="{{k in data.desiredState.replicaSelector | keys}}">
@@ -52,6 +58,10 @@
     Polymer({
       baseurl: 'http://localhost:8001',
 
+      observe: {
+        'data.desiredState.replicas': 'updateReplicaController'
+      },
+
       ready: function() {
         if (!this.data) {
           this.$.req.go();
@@ -77,6 +87,10 @@
           ports.push(p.hostPort + ':' + p.containerPort);
         };
         return ports.join(', ');
+      },
+
+      updateReplicaController: function() {
+        console.log(this.data.desiredState);
       }
     });
   </script>
