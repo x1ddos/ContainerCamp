@@ -1,5 +1,9 @@
-.tinyspace {
-  margin-top: 0.3em;
+.top.space {
+  margin-top: 0.7em;
+}
+
+.inline {
+  display: inline-block;
 }
 
 .smaller {
@@ -38,11 +42,11 @@
 
 .slabel.name {
   color: white;
-  background-color: #f9a825;
+  background-color: #558b2f;
   border-radius: 10px 0 0 10px;
 }
 
 .slabel.value {
-  background-color: #ffeb3b;
+  background-color: #8bc34a;
   border-radius: 0 10px 10px 0;
 }

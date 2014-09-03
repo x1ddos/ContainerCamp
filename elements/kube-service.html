@@ -16,9 +16,9 @@
     <kube-card icon="settings-ethernet" top="{{data.id}}">
       <main>
         {{data.port}} &rsaquo; {{data.containerPort}}
-        <div class="tinyspace">
+        <div class="top space">
           <template repeat="{{k in data.selector | keys}}">
-            <div class="smaller">
+            <div class="smaller inline">
               <span class="slabel name">{{k}}
               </span><span class="slabel value">{{data.selector[k]}}</span>
             </div>

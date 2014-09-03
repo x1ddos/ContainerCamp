@@ -15,8 +15,16 @@
 
     <kube-card icon="apps" top="{{data.id}}">
       <main>
-        Replicas: {{data.desiredState.replicas}}<br/>
-        Selector: {{data.desiredState.replicaSelector | labels}}<br/>
+        <span class="circle">{{data.desiredState.replicas}}</span> replicas
+
+        <div class="top space">
+          <template repeat="{{k in data.desiredState.replicaSelector | keys}}">
+            <div class="smaller inline">
+              <span class="slabel name">{{k}}
+              </span><span class="slabel value">{{data.desiredState.replicaSelector[k]}}</span>
+            </div>
+          </template>
+        </div>
 
         <ul class="bullets">
           <template repeat="{{c in data.desiredState.podTemplate.desiredState.manifest.containers}}">

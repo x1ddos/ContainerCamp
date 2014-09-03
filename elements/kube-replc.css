@@ -1,3 +1,19 @@
+.top.space {
+  margin-top: 0.7em;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.circle {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background-color: #eeeeee;
+  border: 1px solid #bdbdbd;
+}
+
 .bullets {
   list-style: none;
   margin: 0;
@@ -40,4 +56,21 @@ ul.bullets > li:before {
 
 .label.value {
   background-color: #ff9800;
+}
+
+.slabel.name, .slabel.value {
+  display: inline-block;
+  padding: 2px 7px 3px;
+  margin: 1px 0;
+}
+
+.slabel.name {
+  color: white;
+  background-color: #558b2f;
+  border-radius: 10px 0 0 10px;
+}
+
+.slabel.value {
+  background-color: #8bc34a;
+  border-radius: 0 10px 10px 0;
 }
