@@ -1,0 +1,81 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-ajax/core-xhr.html">
+
+<polymer-element name="kube-core" hidden attributes="baseurl apiver auth">
+  <script>
+    Polymer({
+      baseurl: 'http://localhost:8001',
+      apiver: 'v1beta1',
+      auth: '',
+
+      ready: function() {
+        this.xhr = document.createElement('core-xhr');
+      },
+
+      newRequest: function(method, path, body) {
+        var args = {
+          url: this.baseurl + '/api/' + this.apiver + path,
+          method: method,
+          headers: {'Content-Type': 'application/json'}
+        };
+        if (body) {
+          args.body = JSON.stringify(body);
+        };
+        if (this.auth) {
+          args.headers['Authorization'] = this.auth;
+        };
+        return args;
+      },
+
+      doRequest: function(args, callbackFn) {
+        if (callbackFn) {
+          args.callback = function(response, xhr) {
+            var data = xhr.responseText;
+            var status = xhr.status || 0;
+            var isError = !status || (status >= 200 && status < 300);
+            try {
+              data = JSON.parse(data);
+            } catch (err) {
+              console.warn('kube-api: error parsing response:', data);
+              console.warn(err);
+            }
+            callbackFn(data, isError, xhr);
+          }
+        };
+        return this.xhr.request(args);
+      },
+
+      listReplicas: function(opts) {
+        var args = this.newRequest('GET', '/replicationControllers');
+        return this.doRequest(args, opts.callback);
+      },
+      getReplica: function(opts) {
+        var args = this.newRequest('GET', '/replicationControllers/'+opts.rid);
+        return this.doRequest(args, opts.callback);
+      },
+      updateReplica: function(opts, replc) {
+        var url = '/replicationControllers/' + opts.rid;
+        var args = this.newRequest('PUT', url, replc);
+        return this.doRequest(args, opts.callback);
+      },
+
+      listPods: function(opts) {
+        var args = this.newRequest('GET', '/pods');
+        return this.doRequest(args, opts.callback);
+      },
+      getPod: function(opts) {
+        var args = this.newRequest('GET', '/pods/'+opts.pid);
+        return this.doRequest(args, opts.callback);
+      },
+
+      listServices: function(opts) {
+        var args = this.newRequest('GET', '/services');
+        return this.doRequest(args, opts.callback);
+      },
+      getService: function(opts) {
+        var args = this.newRequest('GET', '/services/'+opts.sid);
+        return this.doRequest(args, opts.callback);
+      },
+    });
+  </script>
+</polymer-element>
