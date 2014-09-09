@@ -16,20 +16,27 @@
       },
 
       ready: function() {
-        if (!this.data)
-          this.refresh();
+        this.isDetached = false;
+        this.refresh(!this.data ? 0 : 1000);
       },
 
-      refresh: function() {
-        this.refreshJob = this.job(this.refreshJob, function(){
-          this.core && this.core.listPods({callback: this.receive.bind(this)});
-        }, 0);
+      detached: function() {
+        this.isDetached = true;
       },
 
       // TODO: handle errors
       receive: function(response, isError) {
         this.data = response;
+        !this.isDetached && this.refresh(700);
       },
+
+      refresh: function(delay) {
+        this.refreshJob = this.job(this.refreshJob, this.refreshNow, delay || 0);
+      },
+
+      refreshNow: function() {
+        this.core && this.core.listPods({callback: this.receive.bind(this)});
+      }
     });
   </script>
 </polymer-element>
