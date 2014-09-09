@@ -3,11 +3,12 @@
 <link rel="import" href="../bower_components/core-icons/core-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
+<link rel="import" href="kube-core.html">
 <link rel="import" href="kube-view-pods.html">
 <link rel="import" href="kube-view-replicas.html">
 <link rel="import" href="kube-view-services.html">
 
-<polymer-element name="kube-cluster" attributes="baseurl view">
+<polymer-element name="kube-cluster" attributes="baseurl apiver auth core view">
   <template>
     <link rel="stylesheet" href="kube-cluster.css">
 
@@ -19,13 +20,13 @@
     </core-selector>
 
     <template if="{{view == 'pods'}}">
-      <kube-view-pods baseurl="{{baseurl}}"></kube-view-pods>
+      <kube-view-pods core="{{core}}"></kube-view-pods>
     </template>
     <template if="{{view == 'replicationControllers'}}">
-      <kube-view-replicas baseurl="{{baseurl}}"></kube-view-replicas>
+      <kube-view-replicas core="{{core}}"></kube-view-replicas>
     </template>
     <template if="{{view == 'services'}}">
-      <kube-view-services baseurl="{{baseurl}}"></kube-view-services>
+      <kube-view-services core="{{core}}"></kube-view-services>
     </template>
     <template if="{{view == 'minions'}}">
       TODO: minions (VMs) view
@@ -35,7 +36,28 @@
 
   <script>
     Polymer({
-      view: 'pods',
+      baseurl: 'http://localhost:8001',
+      apiver: 'v1beta1',
+      view: 'replicationControllers',
+
+      observe: {
+        'baseurl apiver auth': 'updateCoreConfig',
+      },
+
+      ready: function() {
+        if (!this.core && this.baseurl) {
+          this.core = document.createElement('kube-core');
+          this.updateCoreConfig(null, true);
+        }
+      },
+
+      updateCoreConfig: function(oldval, newval) {
+        if (this.core && newval) {
+          this.core.baseurl = this.baseurl;
+          this.core.apiver = this.apiver;
+          this.core.auth = this.auth;
+        }
+      }
     });
   </script>
 </polymer-element>

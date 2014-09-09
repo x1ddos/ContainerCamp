@@ -1,18 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/core-icons/core-icons.html">
-<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
 <link rel="import" href="../bower_components/paper-slider/paper-slider.html">
 
 <link rel="import" href="kube-card.html">
 
-<polymer-element name="kube-replc" attributes="rid data baseurl">
+<polymer-element name="kube-replc" attributes="rid data core">
   <template>
     <link rel="stylesheet" href="kube-replc.css">
-
-    <core-ajax id="req"
-               url="{{baseurl}}/api/v1beta1/replicationControllers/{{rid}}"
-               handleAs="json" response="{{data}}">
-    </core-ajax>
 
     <kube-card icon="apps" top="{{data.id}}">
       <main>
@@ -56,16 +50,14 @@
 
   <script>
     Polymer({
-      baseurl: 'http://localhost:8001',
-
       observe: {
-        'data.desiredState.replicas': 'updateReplicaController'
+        'data.desiredState.replicas': 'maybeUpdate'
+        // TODO: refresh on rid or core changes
       },
 
       ready: function() {
-        if (!this.data) {
-          this.$.req.go();
-        }
+        if (!this.data && this.rid)
+          this.refresh();
       },
 
       date: function(v) {
@@ -89,8 +81,31 @@
         return ports.join(', ');
       },
 
-      updateReplicaController: function() {
-        console.log(this.data.desiredState);
+      receive: function(response) {
+        this.data = response;
+        this.rid = this.data.id;
+      },
+
+      refresh: function() {
+        this.refreshJob = this.job(this.refreshJob, function(){
+          this.core && this.core.getReplica({
+            rid: this.rid,
+            callback: this.receive.bind(this)
+          });
+        }, 0);
+      },
+
+      maybeUpdate: function(oldval, newval) {
+        if (typeof oldval !== 'undefined' && newval) {
+          this.update();
+        }
+      },
+
+      update: function() {
+        this.core.updateReplica({
+          rid: this.rid,
+          callback: this.receive.bind(this)
+        }, this.data);
       }
     });
   </script>

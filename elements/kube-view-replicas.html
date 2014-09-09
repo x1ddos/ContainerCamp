@@ -1,19 +1,34 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+
 <link rel="import" href="kube-replc.html">
 
-<polymer-element name="kube-view-replicas" attributes="baseurl">
+<polymer-element name="kube-view-replicas" attributes="data core">
   <template>
-    <core-ajax url="{{baseurl}}/api/v1beta1/replicationControllers"
-               handleAs="json" response="{{data}}" auto>
-    </core-ajax>
     <template repeat="{{item in data.items}}">
-      <kube-replc rid="{{item.id}}" data="{{item}}" baseurl="{{baseurl}}"></kube-replc>
+      <kube-replc rid="{{item.id}}" data="{{item}}" core="{{core}}"></kube-replc>
     </template>
   </template>
   <script>
     Polymer({
-      baseurl: 'http://localhost:8001'
+      data: null,
+      observe: {
+        'core': 'refresh'
+      },
+
+      ready: function() {
+        if (!this.data)
+          this.refresh();
+      },
+
+      receive: function(response) {
+        this.data = response;
+      },
+
+      refresh: function() {
+        this.refreshJob = this.job(this.refreshJob, function(){
+          this.core && this.core.listReplicas({callback: this.receive.bind(this)});
+        }, 0);
+      }
     });
   </script>
 </polymer-element>

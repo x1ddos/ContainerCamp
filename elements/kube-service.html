@@ -1,17 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/core-icons/core-icons.html">
-<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
 
 <link rel="import" href="kube-card.html">
 
-<polymer-element name="kube-service" attributes="sid data baseurl">
+<polymer-element name="kube-service" attributes="sid data core">
   <template>
     <link rel="stylesheet" href="kube-service.css">
-
-    <core-ajax id="req" 
-               url="{{baseurl}}/api/v1beta1/services/{{sid}}"
-               handleAs="json" response="{{data}}">
-    </core-ajax>
 
     <kube-card icon="settings-ethernet" top="{{data.id}}">
       <main>
@@ -39,11 +33,16 @@
 
   <script>
     Polymer({
-      baseurl: 'http://localhost:8001',
+      data: null,
+
+      // TODO: refresh on sid or core changes
+      // observe: {
+      //   'sid core': 'refresh'
+      // },
 
       ready: function() {
         if (!this.data) {
-          this.$.req.go();
+          this.refresh();
         }
       },
 
@@ -59,6 +58,19 @@
           labels.push(k + '=' + obj[k]);
         }
         return labels.join(', ');
+      },
+
+      receive: function(response) {
+        this.data = response;
+      },
+
+      refresh: function(force) {
+        this.refreshJob = this.job(this.refreshJob, function(){
+          this.core && this.core.getService({
+            sid: this.sid,
+            callback: this.receive.bind(this)
+          });
+        }, 0);
       }
     });
   </script>

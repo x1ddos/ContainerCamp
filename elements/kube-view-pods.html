@@ -1,19 +1,35 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+
 <link rel="import" href="kube-pod.html">
 
-<polymer-element name="kube-view-pods" attributes="baseurl">
+<polymer-element name="kube-view-pods" attributes="data core">
   <template>
-    <core-ajax url="{{baseurl}}/api/v1beta1/pods"
-               handleAs="json" response="{{data}}" auto>
-    </core-ajax>
     <template repeat="{{item in data.items}}">
-      <kube-pod pid="{{item.id}}" data="{{item}}" baseurl="{{baseurl}}"></kube-pod>
+      <kube-pod pid="{{item.id}}" data="{{item}}" core="{{core}}"></kube-pod>
     </template>
   </template>
   <script>
     Polymer({
-      baseurl: 'http://localhost:8001'
+      data: null,
+      observe: {
+        'core': 'refresh'
+      },
+
+      ready: function() {
+        if (!this.data)
+          this.refresh();
+      },
+
+      refresh: function() {
+        this.refreshJob = this.job(this.refreshJob, function(){
+          this.core && this.core.listPods({callback: this.receive.bind(this)});
+        }, 0);
+      },
+
+      // TODO: handle errors
+      receive: function(response, isError) {
+        this.data = response;
+      },
     });
   </script>
 </polymer-element>

@@ -1,17 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/core-icons/core-icons.html">
-<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
 
 <link rel="import" href="kube-card.html">
 
-<polymer-element name="kube-pod" attributes="pid data baseurl">
+<polymer-element name="kube-pod" attributes="pid data core">
   <template>
     <link rel="stylesheet" href="kube-pod.css">
-
-    <core-ajax id="req"
-               url="{{baseurl}}/api/v1beta1/pods/{{pid}}"
-               handleAs="json" response="{{data}}">
-    </core-ajax>
 
     <kube-card class="{{data.currentState.status}}" icon="check-circle-blank"
                top="{{data.id}}">
@@ -48,11 +42,14 @@
 
   <script>
     Polymer({
-      baseurl: 'http://localhost:8001',
+      // TODO: refresh on pid or core changes
+      // observe: {
+      //   'pid core': 'refresh'
+      // },
 
       ready: function() {
         if (!this.data) {
-          this.$.req.go();
+          this.refresh();
         }
       },
 
@@ -72,6 +69,19 @@
       cStatus: function(state) {
         if (!state || !state.Running) return "stopped";
         return state.Paused ? "paused" : "running";
+      },
+
+      receive: function(response) {
+        this.data = response;
+      },
+
+      refresh: function() {
+        this.refreshJob = this.job(this.refreshJob, function(){
+          this.core && this.core.getPod({
+            pid: this.pid,
+            callback: this.receive.bind(this)
+          });
+        }, 0);
       }
     });
   </script>
