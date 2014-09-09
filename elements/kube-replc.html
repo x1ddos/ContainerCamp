@@ -96,7 +96,7 @@
       },
 
       maybeUpdate: function(oldval, newval) {
-        if (typeof oldval !== 'undefined' && newval) {
+        if (typeof oldval !== 'undefined' && newval >= 0) {
           this.update();
         }
       },
