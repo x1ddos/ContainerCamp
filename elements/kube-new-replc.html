@@ -83,7 +83,7 @@
         <span class="circle">{{data.desiredState.replicas}}</span> replicas
         <div class="top space">
           <paper-slider pin snaps
-            min="0" max="4" step="1" 
+            min="0" max="4" step="1"
             value="{{data.desiredState.replicas}}">
           </paper-slider>
         </div>
@@ -94,17 +94,17 @@
 
     <!-- <section>
       <paper-input floatingLabel label="Controller ID" value="{{data.rid}}"></paper-input>
-      <paper-slider 
-        min="0" max="10" step="1" 
-        value="{{data.desiredState.replicas}}" 
+      <paper-slider
+        min="0" max="10" step="1"
+        value="{{data.desiredState.replicas}}"
         editable pin snaps>
       </paper-slider>
     </section> -->
 
     <template repeat="{{c, i in containers}}">
-      <kube-new-container 
-        data="{{c}}" 
-        idx="{{i}}" 
+      <kube-new-container
+        data="{{c}}"
+        idx="{{i}}"
         on-remove-me="{{removeContainer}}">
       </kube-new-container>
     </template>
@@ -112,7 +112,7 @@
     <paper-fab class icon="add" on-click="{{addContainer}}"></paper-fab>
 
     <section class="actions">
-      <paper-button label="Create" on-click="{{create}}"></paper-button>  
+      <paper-button label="Create" on-click="{{create}}"></paper-button>
     </section>
   </template>
   <script>
@@ -176,7 +176,10 @@
               filter(function(p) { return p.indexOf(':') > 0 }) || [];
             for (var i=0, p; p = ports[i]; i++) {
               var parts = p.split(':');
-              ports[i] = {hostPort: parts[0], containerPort: parts[1]};
+              ports[i] = {
+                hostPort: parseInt(parts[0]),
+                containerPort: parseInt(parts[1])
+              };
             }
             container['ports'] = ports;
           }
