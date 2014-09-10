@@ -2,6 +2,13 @@ paper-slider {
   width: 100%;
 }
 
+#close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: #3b50ce;
+}
+
 .top.space {
   margin-top: 0.7em;
 }

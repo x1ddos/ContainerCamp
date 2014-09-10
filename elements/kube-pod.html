@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="kube-card.html">
 
@@ -37,6 +38,7 @@
       </template>
 
       <bottom>{{data.creationTimestamp | date}}</bottom>
+      <paper-icon-button id="close" icon="close" on-click="{{remove}}"></paper-icon-button>
     </kube-card>
   </template>
 
@@ -76,6 +78,7 @@
 
       receive: function(response) {
         this.data = response;
+        this.pid = this.data.id;
       },
 
       refresh: function() {
@@ -85,6 +88,11 @@
             callback: this.receive.bind(this)
           });
         }, 0);
+      },
+
+      remove: function() {
+        this.core && this.core.removePod({pid: this.pid});
+        this.super();
       }
     });
   </script>

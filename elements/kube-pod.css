@@ -1,3 +1,10 @@
+#close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: #3b50ce;
+}
+
 kube-card.Terminated::shadow paper-item::shadow core-icon {
   fill: #e51c23; /* red */
 }

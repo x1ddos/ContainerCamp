@@ -32,7 +32,7 @@
           args.callback = function(response, xhr) {
             var data = xhr.responseText;
             var status = xhr.status || 0;
-            var isError = !status || (status >= 200 && status < 300);
+            var isError = !(status >= 200 && status < 300);
             try {
               data = JSON.parse(data);
             } catch (err) {
@@ -63,6 +63,10 @@
         var args = this.newRequest('POST', url, replc);
         return this.doRequest(args, opts.callback);
       },
+      removeReplica: function(opts) {
+        var args = this.newRequest('DELETE', '/replicationControllers/'+opts.rid);
+        return this.doRequest(args, opts.callback);
+      },
 
       listPods: function(opts) {
         var args = this.newRequest('GET', '/pods');
@@ -70,6 +74,10 @@
       },
       getPod: function(opts) {
         var args = this.newRequest('GET', '/pods/'+opts.pid);
+        return this.doRequest(args, opts.callback);
+      },
+      removePod: function(opts) {
+        var args = this.newRequest('DELETE', '/pods/'+opts.pid);
         return this.doRequest(args, opts.callback);
       },
 
