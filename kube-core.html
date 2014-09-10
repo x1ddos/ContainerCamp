@@ -76,6 +76,11 @@
         var args = this.newRequest('GET', '/pods/'+opts.pid);
         return this.doRequest(args, opts.callback);
       },
+      createPod: function(opts, pod) {
+        var url = '/pods';
+        var args = this.newRequest('POST', url, pod);
+        return this.doRequest(args, opts.callback);
+      },
       removePod: function(opts) {
         var args = this.newRequest('DELETE', '/pods/'+opts.pid);
         return this.doRequest(args, opts.callback);

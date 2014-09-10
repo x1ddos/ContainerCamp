@@ -10,7 +10,7 @@
 <link rel="import" href="kube-card.html">
 <link rel="import" href="kube-new-container.html">
 
-<polymer-element name="kube-new-replc" attributes="core label">
+<polymer-element name="kube-new-pod" attributes="core label">
   <template>
     <style>
       :host {
@@ -29,29 +29,12 @@
         color: #4285f4;
         fill: #4285f4;
       }
-      .circle {
-        display: inline-block;
-        padding: 5px 10px;
-        border-radius: 50%;
-        background-color: #eeeeee;
-        border: 1px solid #bdbdbd;
-      }
-      .top.space {
-        margin-top: 0.7em;
-      }
     </style>
 
-    <kube-card icon="apps" top="{{label}}">
+    <kube-card icon="group-work" top="{{label}}">
       <main>
-        <span class="circle">{{data.desiredState.replicas}}</span> replicas
-        <div class="top space">
-          <paper-slider pin snaps
-            min="0" max="4" step="1"
-            value="{{data.desiredState.replicas}}">
-          </paper-slider>
-        </div>
         <paper-input floatingLabel required
-          label="Controller ID: frontendCtrl" value="{{data.id}}">
+          label="Pod ID: myPod" value="{{data.id}}">
         </paper-input>
         <paper-input floatingLabel
           label="Labels: stage=dev, kind=frontend" value="{{data.labels}}">
@@ -75,14 +58,11 @@
   </template>
   <script>
     Polymer({
-      label: 'New Replication Controller',
+      label: 'New Pod',
 
       data: {
-        id: 'myController',
-        labels: '',
-        desiredState: {
-          replicas: 1
-        }
+        id: 'myPod',
+        labels: ''
       },
       containers: [{
         name: "nginx",
@@ -105,14 +85,14 @@
           return;
         };
 
-        var replc = {
+        var pod = {
           id: this.data.id,
           labels: {},
-          desiredState: this.data.desiredState
-        };
-        replc.desiredState.podTemplate = {
           desiredState: {
-            manifest: {version: "v1beta2"}
+            manifest: {
+              version: "v1beta2",
+              id: this.data.id
+            }
           }
         };
 
@@ -161,23 +141,20 @@
           filter(function(e) { return e.indexOf('=') > 0 }) || [];
         for (var i=0, l; l = labels[i]; i++) {
           var parts = l.split('=');
-          replc.labels[parts[0]] = parts[1];
+          pod.labels[parts[0]] = parts[1];
         }
-        if (!replc.labels['name']) {
-          replc.labels['name'] = replc.id;
+        if (!pod.labels['name']) {
+          pod.labels['name'] = pod.id;
         }
 
-        replc.desiredState.replicaSelector = replc.labels;
-        replc.desiredState.podTemplate.labels = replc.labels;
-        replc.desiredState.podTemplate.desiredState.manifest.containers = containers;
-
-        this.core.createReplica({
+        pod.desiredState.manifest.containers = containers;
+        this.core.createPod({
           callback: this.handleCreateResponse.bind(this)
-        }, replc);
+        }, pod);
       },
 
       handleCreateResponse: function(resp, isError) {
-        var evtName = isError ? 'kube-replc-create-error' : 'kube-replc-created';
+        var evtName = isError ? 'kube-pod-create-error' : 'kube-pod-created';
         this.fire(evtName, resp);
       }
     });

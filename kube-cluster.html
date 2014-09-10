@@ -7,6 +7,7 @@
 <link rel="import" href="kube-view-pods.html">
 <link rel="import" href="kube-view-replicas.html">
 <link rel="import" href="kube-view-services.html">
+<link rel="import" href="kube-new-pod.html">
 <link rel="import" href="kube-new-replc.html">
 
 <polymer-element name="kube-cluster" attributes="baseurl apiver auth core view">
@@ -19,7 +20,7 @@
         display: block;
         margin-bottom: 1em;
       }
-      #addForm {
+      #createForm {
         display: block;
         margin-bottom: 1.5em;
         padding-bottom: 1em;
@@ -39,19 +40,23 @@
       </core-selector>
 
       <paper-icon-button class="add" icon="add-circle" fill isToggle
-        active="{{showAddForm}}">
+        active="{{showCreateForm}}">
       </paper-icon-button>
     </section>
 
-    <template if="{{showAddForm}}">
-      <section id="addForm">
+    <template if="{{showCreateForm}}">
+      <section id="createForm" on-kube-pod-created="{{hideCreateForm}}"
+                             on-kube-replc-created="{{hideCreateForm}}">
+        <template if="{{view == 'pods'}}">
+          <kube-new-pod core="{{core}}"></kube-new-pod>
+        </template>
         <template if="{{view == 'replicationControllers'}}">
           <kube-new-replc core="{{core}}"></kube-new-replc>
         </template>
       </section>
     </template>
 
-    <section on-kube-replc-created="{{switchToView}}">
+    <section>
       <template if="{{view == 'pods'}}">
         <kube-view-pods core="{{core}}"></kube-view-pods>
       </template>
@@ -76,9 +81,11 @@
 
       observe: {
         'baseurl apiver auth': 'updateCoreConfig',
+        'view': 'hideCreateForm'
       },
-      viewChanged: function() {
-        this.showAddForm = false;
+
+      hideCreateForm: function() {
+        this.showCreateForm = false;
       },
 
       ready: function() {
@@ -94,11 +101,6 @@
           this.core.apiver = this.apiver;
           this.core.auth = this.auth;
         }
-      },
-
-      switchToView: function() {
-        this.view = 'replicationControllers';
-        this.showAddForm = false;
       }
     });
   </script>
