@@ -7,30 +7,45 @@
 <link rel="import" href="kube-view-pods.html">
 <link rel="import" href="kube-view-replicas.html">
 <link rel="import" href="kube-view-services.html">
+<link rel="import" href="kube-new-replc.html">
 
 <polymer-element name="kube-cluster" attributes="baseurl apiver auth core view">
   <template>
-    <link rel="stylesheet" href="kube-cluster.css">
+    <style>
+      :host {
+        display: block;
+      }
+      #nav {
+        display: block;
+        margin-bottom: 1em;
+      }
+    </style>
 
     <core-selector valueattr="view" selected="{{view}}" id="nav">
       <paper-icon-button view="pods" fill isToggle icon="group-work"></paper-icon-button>
       <paper-icon-button view="replicationControllers" fill isToggle icon="apps"></paper-icon-button>
       <paper-icon-button view="services" fill isToggle icon="settings-ethernet"></paper-icon-button>
       <paper-icon-button view="minions" fill isToggle icon="cloud"></paper-icon-button>
+      <paper-icon-button view="add" fill isToggle icon="add"></paper-icon-button>
     </core-selector>
 
-    <template if="{{view == 'pods'}}">
-      <kube-view-pods core="{{core}}"></kube-view-pods>
-    </template>
-    <template if="{{view == 'replicationControllers'}}">
-      <kube-view-replicas core="{{core}}"></kube-view-replicas>
-    </template>
-    <template if="{{view == 'services'}}">
-      <kube-view-services core="{{core}}"></kube-view-services>
-    </template>
-    <template if="{{view == 'minions'}}">
-      TODO: minions (VMs) view
-    </template>
+    <section on-kube-replc-created="{{switchToView}}">
+      <template if="{{view == 'pods'}}">
+        <kube-view-pods core="{{core}}"></kube-view-pods>
+      </template>
+      <template if="{{view == 'replicationControllers'}}">
+        <kube-view-replicas core="{{core}}"></kube-view-replicas>
+      </template>
+      <template if="{{view == 'services'}}">
+        <kube-view-services core="{{core}}"></kube-view-services>
+      </template>
+      <template if="{{view == 'minions'}}">
+        TODO: minions (VMs) view
+      </template>
+      <template if="{{view == 'add'}}">
+        <kube-new-replc core="{{core}}"></kube-new-replc>
+      </template>
+    </section>
 
   </template>
 
@@ -57,6 +72,10 @@
           this.core.apiver = this.apiver;
           this.core.auth = this.auth;
         }
+      },
+
+      switchToView: function() {
+        this.view = 'replicationControllers';
       }
     });
   </script>

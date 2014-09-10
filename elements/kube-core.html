@@ -58,6 +58,11 @@
         var args = this.newRequest('PUT', url, replc);
         return this.doRequest(args, opts.callback);
       },
+      createReplica: function(opts, replc) {
+        var url = '/replicationControllers';
+        var args = this.newRequest('POST', url, replc);
+        return this.doRequest(args, opts.callback);
+      },
 
       listPods: function(opts) {
         var args = this.newRequest('GET', '/pods');

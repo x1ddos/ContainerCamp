@@ -1,0 +1,224 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/paper-shadow/paper-shadow.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="kube-card.html">
+
+<polymer-element name="kube-new-container" attributes="data idx">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        vertical-align: top;
+        background: white;
+        width: 20%;
+        min-width: 300px;
+        max-width: 400px;
+        position: relative;
+        margin: 0 16px 20px 0;
+        border-radius: 2px;
+        padding: 10px 30px 20px 20px;
+      }
+      paper-input {
+        width: 100%;
+      }
+      #close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: rgba(0,0,0,0.54);
+      }
+    </style>
+    <paper-input floatingLabel label="Name" value="{{data.name}}"></paper-input>
+    <paper-input floatingLabel label="Image" value="{{data.image}}"></paper-input>
+    <paper-input floatingLabel label="Command" value="{{data.command}}"></paper-input>
+    <paper-input floatingLabel label="Ports" value="{{data.ports}}"></paper-input>
+    <paper-input floatingLabel label="Environment" value="{{data.env}}"></paper-input>
+    <paper-icon-button id="close" icon="close" on-click="{{remove}}"></paper-icon-button>
+    <paper-shadow z="1"></paper-shadow>
+  </template>
+  <script>
+    Polymer({
+      remove: function() {
+        this.fire('remove-me')
+      }
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="kube-new-replc" attributes="core label">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      kube-card {
+        width: 20%;
+      }
+      kube-card paper-input, kube-card paper-slider {
+        width: 100%;
+      }
+      paper-fab {
+        color: #ffffff;
+      }
+      .circle {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 50%;
+        background-color: #eeeeee;
+        border: 1px solid #bdbdbd;
+      }
+      .top.space {
+        margin-top: 0.7em;
+      }
+    </style>
+
+    <kube-card icon="apps" top="{{label}}">
+      <main>
+        <span class="circle">{{data.desiredState.replicas}}</span> replicas
+        <div class="top space">
+          <paper-slider pin snaps
+            min="0" max="4" step="1" 
+            value="{{data.desiredState.replicas}}">
+          </paper-slider>
+        </div>
+        <paper-input floatingLabel label="Controller ID" value="{{data.id}}"></paper-input>
+        <paper-input floatingLabel label="Labels" value="{{data.labels}}"></paper-input>
+      </main>
+    </kube-card>
+
+    <!-- <section>
+      <paper-input floatingLabel label="Controller ID" value="{{data.rid}}"></paper-input>
+      <paper-slider 
+        min="0" max="10" step="1" 
+        value="{{data.desiredState.replicas}}" 
+        editable pin snaps>
+      </paper-slider>
+    </section> -->
+
+    <template repeat="{{c, i in containers}}">
+      <kube-new-container 
+        data="{{c}}" 
+        idx="{{i}}" 
+        on-remove-me="{{removeContainer}}">
+      </kube-new-container>
+    </template>
+
+    <paper-fab class icon="add" on-click="{{addContainer}}"></paper-fab>
+
+    <section class="actions">
+      <paper-button label="Create" on-click="{{create}}"></paper-button>  
+    </section>
+  </template>
+  <script>
+    Polymer({
+      label: 'New Replication Controller',
+
+      data: {
+        id: 'myController',
+        labels: '',
+        desiredState: {
+          replicas: 1
+        }
+      },
+      containers: [{
+        name: "nginx",
+        image: "dockerfile/nginx",
+        command: "",
+        ports: "",
+        env: ""
+      }],
+
+      addContainer: function() {
+        this.containers.push({});
+      },
+
+      removeContainer: function(event, obj, source) {
+        this.containers.splice(source.idx, 1);
+      },
+
+      create: function() {
+        if (!this.core) {
+          return;
+        };
+
+        var replc = {
+          id: this.data.id,
+          labels: {},
+          desiredState: this.data.desiredState
+        };
+        replc.desiredState.podTemplate = {
+          desiredState: {
+            manifest: {version: "v1beta2"}
+          }
+        };
+
+        var containers = [];
+        this.containers.forEach(function(c) {
+          if (!c.name || !c.image)
+            return;
+          var container = {
+            name: c.name,
+            image: c.image
+          };
+          if (c.command) {
+            container['command'] = c.command;
+          }
+          if (c.ports) {
+            var ports = c.ports.
+              replace(/, +/g, ',').
+              split(/[, ]/).
+              filter(function(p) { return p.indexOf(':') > 0 }) || [];
+            for (var i=0, p; p = ports[i]; i++) {
+              var parts = p.split(':');
+              ports[i] = {hostPort: parts[0], containerPort: parts[1]};
+            }
+            container['ports'] = ports;
+          }
+          if (c.env) {
+            var env = c.env.
+              replace(/, +/g, ',').
+              split(/[, ]/).
+              filter(function(e) { return e.indexOf('=') > 0 }) || [];
+            for (var i=0, e; e = env[i]; i++) {
+              var parts = e.split('=');
+              env[i] = {name: parts[0], value: parts[1]};
+            }
+            container['env'] = env;
+          }
+          containers.push(container);
+        });
+
+        var labels = this.data.labels.
+          replace(/, +/g, ',').
+          split(/[, ]/).
+          filter(function(e) { return e.indexOf('=') > 0 }) || [];
+        for (var i=0, l; l = labels[i]; i++) {
+          var parts = l.split('=');
+          replc.labels[parts[0]] = parts[1];
+        }
+        if (!replc.labels['name']) {
+          replc.labels['name'] = replc.id;
+        }
+
+        replc.desiredState.replicaSelector = replc.labels;
+        replc.desiredState.podTemplate.labels = replc.labels;
+        replc.desiredState.podTemplate.desiredState.manifest.containers = containers;
+
+        this.core.createReplica({
+          callback: this.handleCreateResponse.bind(this)
+        }, replc);
+      },
+
+      handleCreateResponse: function(resp, isError) {
+        var evtName = isError ? 'kube-replc-create-error' : 'kube-replc-created';
+        this.fire(evtName, resp);
+      }
+    });
+  </script>
+</polymer-element>
