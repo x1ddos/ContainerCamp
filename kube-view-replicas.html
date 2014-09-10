@@ -1,11 +1,11 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="kube-pod.html">
+<link rel="import" href="kube-replc.html">
 
-<polymer-element name="kube-view-pods" attributes="data core">
+<polymer-element name="kube-view-replicas" attributes="data core">
   <template>
     <template repeat="{{item in data.items}}">
-      <kube-pod pid="{{item.id}}" data="{{item}}" core="{{core}}"></kube-pod>
+      <kube-replc rid="{{item.id}}" data="{{item}}" core="{{core}}"></kube-replc>
     </template>
   </template>
   <script>
@@ -27,7 +27,7 @@
       // TODO: handle errors
       receive: function(response, isError) {
         this.data = response;
-        !this.isDetached && this.refresh(700);
+        !this.isDetached && this.refresh(1000);
       },
 
       refresh: function(delay) {
@@ -35,7 +35,7 @@
       },
 
       refreshNow: function() {
-        this.core && this.core.listPods({callback: this.receive.bind(this)});
+        this.core && this.core.listReplicas({callback: this.receive.bind(this)});
       }
     });
   </script>
