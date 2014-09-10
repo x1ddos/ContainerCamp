@@ -24,7 +24,8 @@
             <li class="{{data.currentState.info[c.name].State | cStatus}}">
               {{c.name}}<br/>
               <span class="secondary smaller">{{c.image}}</span><br/>
-              <span class="secondary smaller">{{c.ports | cPorts}}</span>
+              <span class="secondary smaller">{{c.ports | cPorts}}</span><br>
+              <span class="secondary smaller">{{c.env | cEnv}}</span>
             </li>
           </template>
         </ul>
@@ -64,12 +65,22 @@
       cPorts: function(items) {
         var ports = [];
         if (!items) {
-          return ports;
+          return;
         }
         for (var i=0, p; p = items[i]; i++) {
           ports.push(p.hostPort + ':' + p.containerPort);
         };
         return ports.join(', ');
+      },
+      cEnv: function(items) {
+        if (!items) {
+          return;
+        }
+        var env = [];
+        for (var i=0, e; e = items[i]; i++) {
+          env.push(e.name + '=' + e.value);
+        }
+        return env.join(', ')
       },
       cStatus: function(state) {
         if (!state || !state.Running) return "stopped";
