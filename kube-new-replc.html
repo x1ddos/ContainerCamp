@@ -34,12 +34,24 @@
         color: rgba(0,0,0,0.54);
       }
     </style>
-    <paper-input floatingLabel label="Name" value="{{data.name}}"></paper-input>
-    <paper-input floatingLabel label="Image" value="{{data.image}}"></paper-input>
-    <paper-input floatingLabel label="Command" value="{{data.command}}"></paper-input>
-    <paper-input floatingLabel label="Ports" value="{{data.ports}}"></paper-input>
-    <paper-input floatingLabel label="Environment" value="{{data.env}}"></paper-input>
-    <paper-icon-button id="close" icon="close" on-click="{{remove}}"></paper-icon-button>
+    <paper-input floatingLabel required
+      label="Name: myNginx" value="{{data.name}}">
+    </paper-input>
+    <paper-input floatingLabel required
+      label="Image: dockerfile/nginx" value="{{data.image}}">
+    </paper-input>
+    <paper-input floatingLabel
+      label="Command" value="{{data.command}}">
+    </paper-input>
+    <paper-input floatingLabel
+      label="Ports: 8080:80, 9090:8081" value="{{data.ports}}">
+    </paper-input>
+    <paper-input floatingLabel
+      label="Environment: FOO=bar, X=yz" value="{{data.env}}">
+    </paper-input>
+    <paper-icon-button id="close" icon="close"
+      on-click="{{remove}}">
+    </paper-icon-button>
     <paper-shadow z="1"></paper-shadow>
   </template>
   <script>
@@ -87,8 +99,12 @@
             value="{{data.desiredState.replicas}}">
           </paper-slider>
         </div>
-        <paper-input floatingLabel label="Controller ID" value="{{data.id}}"></paper-input>
-        <paper-input floatingLabel label="Labels" value="{{data.labels}}"></paper-input>
+        <paper-input floatingLabel required
+          label="Controller ID: frontendCtrl" value="{{data.id}}">
+        </paper-input>
+        <paper-input floatingLabel
+          label="Labels: stage=dev, kind=frontend" value="{{data.labels}}">
+        </paper-input>
       </main>
     </kube-card>
 
