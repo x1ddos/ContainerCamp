@@ -19,15 +19,37 @@
         display: block;
         margin-bottom: 1em;
       }
+      #addForm {
+        display: block;
+        margin-bottom: 1.5em;
+        padding-bottom: 1em;
+        border-bottom: 1px solid rgba(0,0,0,0.12);
+      }
+      paper-icon-button.add {
+        color: #5677fc;
+      }
     </style>
 
-    <core-selector valueattr="view" selected="{{view}}" id="nav">
-      <paper-icon-button view="pods" fill isToggle icon="group-work"></paper-icon-button>
-      <paper-icon-button view="replicationControllers" fill isToggle icon="apps"></paper-icon-button>
-      <paper-icon-button view="services" fill isToggle icon="settings-ethernet"></paper-icon-button>
-      <paper-icon-button view="minions" fill isToggle icon="cloud"></paper-icon-button>
-      <paper-icon-button view="add" fill isToggle icon="add"></paper-icon-button>
-    </core-selector>
+    <section id="nav">
+      <core-selector valueattr="view" selected="{{view}}">
+        <paper-icon-button view="pods" fill isToggle icon="group-work"></paper-icon-button>
+        <paper-icon-button view="replicationControllers" fill isToggle icon="apps"></paper-icon-button>
+        <paper-icon-button view="services" fill isToggle icon="settings-ethernet"></paper-icon-button>
+        <paper-icon-button view="minions" fill isToggle icon="cloud"></paper-icon-button>
+      </core-selector>
+
+      <paper-icon-button class="add" icon="add-circle" fill isToggle
+        active="{{showAddForm}}">
+      </paper-icon-button>
+    </section>
+
+    <template if="{{showAddForm}}">
+      <section id="addForm">
+        <template if="{{view == 'replicationControllers'}}">
+          <kube-new-replc core="{{core}}"></kube-new-replc>
+        </template>
+      </section>
+    </template>
 
     <section on-kube-replc-created="{{switchToView}}">
       <template if="{{view == 'pods'}}">
@@ -42,9 +64,6 @@
       <template if="{{view == 'minions'}}">
         TODO: minions (VMs) view
       </template>
-      <template if="{{view == 'add'}}">
-        <kube-new-replc core="{{core}}"></kube-new-replc>
-      </template>
     </section>
 
   </template>
@@ -57,6 +76,9 @@
 
       observe: {
         'baseurl apiver auth': 'updateCoreConfig',
+      },
+      viewChanged: function() {
+        this.showAddForm = false;
       },
 
       ready: function() {
@@ -76,6 +98,7 @@
 
       switchToView: function() {
         this.view = 'replicationControllers';
+        this.showAddForm = false;
       }
     });
   </script>
