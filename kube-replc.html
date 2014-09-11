@@ -31,8 +31,8 @@
           <template repeat="{{c in data.desiredState.podTemplate.desiredState.manifest.containers}}">
             <li>
               {{c.name}}<br/>
-              <span class="secondary smaller">{{c.image}}</span><br/>
-              <span class="secondary smaller">{{c.ports | cPorts}}</span>
+              <span class="secondary smaller newline">{{c.image}}</span>
+              <span class="secondary smaller newline">{{c.ports | cPorts}}</span>
             </li>
           </template>
         </ul>

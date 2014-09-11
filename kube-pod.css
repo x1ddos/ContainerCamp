@@ -57,6 +57,11 @@ ul.bullets > li.stopped:before {
   font-size: smaller;
 }
 
+.newline:before {
+  content: "";
+  display: block;
+}
+
 .label.item {
   text-align: right;
 }

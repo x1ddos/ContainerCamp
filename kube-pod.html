@@ -23,9 +23,10 @@
           <template repeat="{{c in data.desiredState.manifest.containers}}">
             <li class="{{data.currentState.info[c.name].State | cStatus}}">
               {{c.name}}<br/>
-              <span class="secondary smaller">{{c.image}}</span><br/>
-              <span class="secondary smaller">{{c.ports | cPorts}}</span><br>
-              <span class="secondary smaller">{{c.env | cEnv}}</span>
+              <span class="secondary smaller newline">{{c.image}}</span>
+              <span class="secondary smaller newline">{{c.command | join}}</span>
+              <span class="secondary smaller newline">{{c.ports | cPorts}}</span>
+              <span class="secondary smaller newline">{{c.env | cEnv}}</span>
             </li>
           </template>
         </ul>
@@ -85,6 +86,9 @@
       cStatus: function(state) {
         if (!state || !state.Running) return "stopped";
         return state.Paused ? "paused" : "running";
+      },
+      join: function(items, delim) {
+        return (items || []).join(delim || ' ');
       },
 
       receive: function(response) {
