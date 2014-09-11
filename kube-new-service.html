@@ -73,8 +73,8 @@
           id: this.data.id.toLowerCase(),
           labels: {},
           selector: {},
-          port: this.data.port,
-          containerPort: this.data.containerPort
+          port: parseInt(this.data.port),
+          containerPort: parseInt(this.data.containerPort)
         };
 
         var labels = this.data.labels.
