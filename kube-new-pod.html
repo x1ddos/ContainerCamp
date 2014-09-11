@@ -102,7 +102,7 @@
             image: c.image
           };
           if (c.command) {
-            container['command'] = c.command;
+            container['command'] = c.command.split(/ +/);
           }
           if (c.ports) {
             var ports = c.ports.
