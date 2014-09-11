@@ -27,7 +27,7 @@
       // TODO: handle errors
       receive: function(response, isError) {
         this.data = response;
-        !this.isDetached && this.refresh(700);
+        !this.isDetached && this.refresh(1000);
       },
 
       refresh: function(delay) {
