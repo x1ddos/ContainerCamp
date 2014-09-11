@@ -1,15 +1,30 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-ajax/core-xhr.html">
 
-<polymer-element name="kube-core" hidden attributes="baseurl apiver auth">
+<polymer-element name="kube-core" hidden attributes="baseurl apiver auth zone provider">
   <script>
     Polymer({
       baseurl: 'http://localhost:8001',
       apiver: 'v1beta1',
       auth: '',
+      zone: 'europe-west1-a',
+      provider: 'GCE',
 
       ready: function() {
         this.xhr = document.createElement('core-xhr');
+      },
+
+      sshURL: function(host) {
+        if (this.provider === 'GCE') {
+          var parts = (host || '').split('.');
+          if (parts.length < 4) {
+            return null;
+          };
+          var zone = 'europe-west1-a';
+          return 'https://cloudssh.developers.google.com/projects/' + parts[2] +
+            '/zones/' + this.zone +
+            '/instances/' + parts[0];
+        }
       },
 
       newRequest: function(method, path, body) {

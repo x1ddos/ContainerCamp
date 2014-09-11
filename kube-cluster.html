@@ -11,7 +11,7 @@
 <link rel="import" href="kube-new-replc.html">
 <link rel="import" href="kube-new-service.html">
 
-<polymer-element name="kube-cluster" attributes="baseurl apiver auth core view">
+<polymer-element name="kube-cluster" attributes="baseurl apiver zone auth core view">
   <template>
     <style>
       :host {
@@ -82,10 +82,11 @@
     Polymer({
       baseurl: 'http://localhost:8001',
       apiver: 'v1beta1',
+      zone: 'europe-west1-a',
       view: 'replicationControllers',
 
       observe: {
-        'baseurl apiver auth': 'updateCoreConfig',
+        'baseurl apiver zone auth': 'updateCoreConfig',
         'view': 'hideCreateForm'
       },
 
@@ -104,6 +105,7 @@
         if (this.core && newval) {
           this.core.baseurl = this.baseurl;
           this.core.apiver = this.apiver;
+          this.core.zone = this.zone;
           this.core.auth = this.auth;
         }
       }

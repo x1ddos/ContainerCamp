@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-icons/core-icons.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-item/paper-item.html">
 
 <link rel="import" href="kube-card.html">
 
@@ -11,15 +12,19 @@
     <kube-card class="{{data.currentState.status}}" icon="check-circle-blank"
                top="{{data.id}}">
       <main>
-        <div class="truncate">
-          {{data.currentState.host || "Not deployed"}}
-        </div>
+        <template if="{{!data.currentState.host}}">
+          Not deployed
+        </template>
         <template if="{{data.currentState.host}}">
-          {{data.currentState.hostIP}} <span class="d">/</span>
+          <paper-item icon="launch" on-click="{{ssh}}">
+            <span class="truncate">{{data.currentState.host}}</span>
+          </paper-item>
+          {{data.currentState.hostIP}}
+          <span class="d">/</span>
           <span class="secondary">{{data.currentState.podIP}}</span>
         </template>
 
-        <ul class="bullets">
+        <ul class="bullets top space">
           <template repeat="{{c in data.desiredState.manifest.containers}}">
             <li class="{{data.currentState.info[c.name].State | cStatus}}">
               {{c.name}}<br/>
@@ -108,6 +113,11 @@
       remove: function() {
         this.core && this.core.removePod({pid: this.pid});
         this.super();
+      },
+
+      ssh: function() {
+        var url = this.core && this.core.sshURL(this.data.currentState.host);
+        url && window.open(url, '_blank', 'menubar=no,status=no,toolbar=no,scrollbars=yes');
       }
     });
   </script>

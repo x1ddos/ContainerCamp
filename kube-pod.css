@@ -17,6 +17,11 @@ kube-card.Waiting::shadow paper-item::shadow core-icon {
   fill: #ffeb3b; /* yellow */
 }
 
+paper-item[icon="launch"] {
+  margin-left: 0;
+  padding-left: 0;
+}
+
 .bullets {
   list-style: none;
   margin: 0;
@@ -60,6 +65,10 @@ ul.bullets > li.stopped:before {
 .newline:before {
   content: "";
   display: block;
+}
+
+.top.space {
+  margin-top: 0.7em;
 }
 
 .label.item {
