@@ -4,8 +4,16 @@
 
 <polymer-element name="kube-view-pods" attributes="data core">
   <template>
-    <template repeat="{{item in data.items}}">
-      <kube-pod pid="{{item.id}}" data="{{item}}" core="{{core}}"></kube-pod>
+    <style>
+      kube-view-replicas {
+        margin-bottom: 2em;
+        padding-bottom: 1.5em;
+        border-bottom: 1px solid rgba(0,0,0,0.12);
+      }
+    </style>
+    <kube-view-replicas core="{{core}}"></kube-view-replicas>
+    <template repeat="{{pod in data.items}}">
+      <kube-pod pid="{{pod.id}}" data="{{pod}}" core="{{core}}"></kube-pod>
     </template>
   </template>
   <script>

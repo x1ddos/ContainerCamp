@@ -4,6 +4,9 @@
 
 <polymer-element name="kube-view-replicas" attributes="data core">
   <template>
+    <style>
+      :host { display: block; }
+    </style>
     <template repeat="{{item in data.items}}">
       <kube-replc rid="{{item.id}}" data="{{item}}" core="{{core}}"></kube-replc>
     </template>
