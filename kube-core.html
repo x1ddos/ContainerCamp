@@ -94,6 +94,14 @@
         var args = this.newRequest('GET', '/services/'+opts.sid);
         return this.doRequest(args, opts.callback);
       },
+      createService: function(opts, srv) {
+        var args = this.newRequest('POST', '/services', srv);
+        return this.doRequest(args, opts.callback);
+      },
+      removeService: function(opts) {
+        var args = this.newRequest('DELETE', '/services/'+opts.sid);
+        return this.doRequest(args, opts.callback);
+      }
     });
   </script>
 </polymer-element>

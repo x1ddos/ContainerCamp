@@ -1,0 +1,112 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+
+<link rel="import" href="kube-card.html">
+<link rel="import" href="kube-new-container.html">
+
+<polymer-element name="kube-new-service" attributes="core label">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      kube-card {
+        width: 20%;
+      }
+      kube-card paper-input {
+        width: 100%;
+      }
+      paper-fab {
+        color: #ffffff;
+      }
+      .actions > paper-button {
+        color: #4285f4;
+        fill: #4285f4;
+      }
+    </style>
+
+    <kube-card icon="settings-ethernet" top="{{label}}">
+      <main>
+        <paper-input floatingLabel required
+          label="Service ID: myService" value="{{data.id}}">
+        </paper-input>
+        <paper-input floatingLabel multiline
+          label="Labels: stage=dev, kind=frontend" value="{{data.labels}}">
+        </paper-input>
+        <paper-input floatingLabel multiline required
+          label="Selector: name=myPods" value="{{data.selector}}">
+        </paper-input>
+        <paper-input floatingLabel required type="number"
+          label="Host Port: 8080" value="{{data.port}}">
+        </paper-input>
+        <paper-input floatingLabel required type="number"
+          label="Container Port: 80" value="{{data.containerPort}}">
+        </paper-input>
+      </main>
+    </kube-card>
+
+    <section class="actions">
+      <paper-button label="Create" on-click="{{create}}"></paper-button>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      label: 'New Service',
+
+      data: {
+        id: 'my-service',
+        labels: '',
+        selector: 'name=myPods',
+        port: 8080,
+        containerPort: 80
+      },
+
+      create: function() {
+        if (!this.core) {
+          return;
+        };
+
+        var srv = {
+          id: this.data.id.toLowerCase(),
+          labels: {},
+          selector: {},
+          port: this.data.port,
+          containerPort: this.data.containerPort
+        };
+
+        var labels = this.data.labels.
+          replace(/, +/g, ',').
+          split(/[, ]/).
+          filter(function(e) { return e.indexOf('=') > 0 }) || [];
+        for (var i=0, l; l = labels[i]; i++) {
+          var parts = l.split('=');
+          srv.labels[parts[0]] = parts[1];
+        }
+        if (!srv.labels['name']) {
+          srv.labels['name'] = this.data.id;
+        }
+
+        var selector = this.data.selector.
+          replace(/, +/g, ',').
+          split(/[, ]/).
+          filter(function(e) { return e.indexOf('=') > 0 }) || [];
+        for (var i=0, l; l = selector[i]; i++) {
+          var parts = l.split('=');
+          srv.selector[parts[0]] = parts[1];
+        }
+
+        this.core.createService({
+          callback: this.handleCreateResponse.bind(this)
+        }, srv);
+      },
+
+      handleCreateResponse: function(resp, isError) {
+        var evtName = isError ? 'kube-service-create-error' : 'kube-service-created';
+        this.fire(evtName, resp);
+      }
+    });
+  </script>
+</polymer-element>

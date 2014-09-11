@@ -9,6 +9,7 @@
 <link rel="import" href="kube-view-services.html">
 <link rel="import" href="kube-new-pod.html">
 <link rel="import" href="kube-new-replc.html">
+<link rel="import" href="kube-new-service.html">
 
 <polymer-element name="kube-cluster" attributes="baseurl apiver auth core view">
   <template>
@@ -46,12 +47,16 @@
 
     <template if="{{showCreateForm}}">
       <section id="createForm" on-kube-pod-created="{{hideCreateForm}}"
-                             on-kube-replc-created="{{hideCreateForm}}">
+                             on-kube-replc-created="{{hideCreateForm}}"
+                             on-kube-service-created="{{hideCreateForm}}">
         <template if="{{view == 'pods'}}">
           <kube-new-pod core="{{core}}"></kube-new-pod>
         </template>
         <template if="{{view == 'replicationControllers'}}">
           <kube-new-replc core="{{core}}"></kube-new-replc>
+        </template>
+        <template if="{{view == 'services'}}">
+          <kube-new-service core="{{core}}"></kube-new-service>
         </template>
       </section>
     </template>

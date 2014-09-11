@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="kube-card.html">
 
@@ -28,6 +29,7 @@
       </template>
 
       <bottom>{{data.creationTimestamp | date}}</bottom>
+      <paper-icon-button id="close" icon="close" on-click="{{remove}}"></paper-icon-button>
     </kube-card>
   </template>
 
@@ -62,6 +64,7 @@
 
       receive: function(response) {
         this.data = response;
+        this.sid = this.data.id;
       },
 
       refresh: function(force) {
@@ -71,6 +74,11 @@
             callback: this.receive.bind(this)
           });
         }, 0);
+      },
+
+      remove: function() {
+        this.core && this.core.removeService({sid: this.sid});
+        this.super();
       }
     });
   </script>
