@@ -12,9 +12,9 @@ with a couple of pods.
 
   2.2. Add the following line to  `/etc/hosts`:
 
-       `<kubernetes-master-ip-address> kubernetes.invalid`
+        <kubernetes-master-ip-address> kubernetes.invalid
 
-       kubernetes.invalid is the name Kubernetes uses for its self-signed cert.
+  kubernetes.invalid is the name Kubernetes uses for its self-signed cert.
 
 3. Get the components: `bower install crhym3/ContainerCamp`.
 
