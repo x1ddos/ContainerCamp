@@ -2,38 +2,37 @@ A ContainerCamp demo.
 
 ## Setup
 
-1. Make sure your [Kubernetes cluster][kubesetup] is running 
-with a couple of pods.
+1. Make sure your [Kubernetes cluster][kubesetup] is running,
+even better with a couple of pods so that you can see immediately
+whether the connection to the Kubernetes API server is working.
 
-2. Ensure your cluster is accessible from a webapp:
+   Unfortunately, release [v0.4.3][v0.4.3] still contains a [kubecfg proxy bug][bug],
+   so you'll have to either wait for a new release or build the `kubecfg` tool
+   from source code yourself.
 
-  2.1. Because Kubernetes is still using HTTP Basic Auth and self-signed certificate,
-       you'll have to import that self-signed cert and make your browser trust it.
-
-  2.2. Add the following line to  `/etc/hosts`:
-
-       `<kubernetes-master-ip-address> kubernetes.invalid`
-
-       kubernetes.invalid is the name Kubernetes uses for its self-signed cert.
-
-3. Get the components: `bower install crhym3/ContainerCamp`.
+2. Get the components: `bower install crhym3/ContainerCamp`.
 
    By default it should be installed in `bower_components/ContainerCamp` along with all
    the dependencies.
 
-4. Open `ContainerCamp/index.html` and replace
+   If you've ever asked about polymer/platform version resolution,
+   choose `0.4.2`.
 
-   `auth="Basic YWRtaW46cHl2dklaNloxdU1HUjhMZAo="`
+3. Start Kubernetes proxy and make it serve static assets from `bower_components`:
 
-   attribute of `<kube-cluster>` tag with your cluster's password. You can find it in `~/.kubernetes_auth`.
+   `kubecfg -proxy -www bower_components`
 
-   Here's how to get it in Base64 encoding on MacOS: `echo admin:<pwd> | base64`.
+   If you've built `kubecfg` yourself, don't forget to let it know where to find
+   the master before starting the proxy:
 
-5. Start serving from `bower_components` as the root dir with any static HTTP server at hand and navigate to 
-   `http://localhost/ContainerCamp/index.html`
-  
+   `export KUBERNETES_MASTER=https://1.2.3.4`
+
+4. Navigate to `http://localhost:8001/static/ContainerCamp/`
+
   ![screen shot 2014-09-02 at 2 49 44 pm][screenshot]
 
 
 [kubesetup]: https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/gce.md "Kubernetes setup on GCE"
 [screenshot]: https://cloud.githubusercontent.com/assets/25405/4119218/f0797dac-32a8-11e4-80ae-51aa8ccf9704.png
+[v0.4.3]: https://github.com/GoogleCloudPlatform/kubernetes/releases/tag/v0.4.3
+[bug]: https://github.com/GoogleCloudPlatform/kubernetes/issues/1149
