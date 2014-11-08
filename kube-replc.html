@@ -54,11 +54,13 @@
     Polymer({
       refreshInterval: 2000,
       observe: {
-        'data.desiredState.replicas': 'maybeUpdate'
-        // TODO: refresh on rid or core changes
+        'data.desiredState.replicas': 'maybeUpdate',
+        'rid': 'refresh'
+        // TODO: refresh on core changes
       },
 
       ready: function() {
+        this.isUpdating = false;
         if (!this.data && this.rid)
           this.refresh();
       },
@@ -92,13 +94,17 @@
       },
 
       receive: function(response) {
-        this.data = response;
-        this.rid = this.data.id;
+        if (this.isUpdating)
+          return;
+        if (response.id) {
+          this.data = response;
+          this.rid = this.data.id;
+        }
         !this.isDetached && this.refresh(this.refreshInterval);
       },
 
       refresh: function(delay) {
-        this.refreshJob = this.job(this.refreshJob, this.refreshNow, delay || 0);
+        this.refreshJob = this.job(this.refreshJob, this.refreshNow, parseInt(delay) || 0);
       },
 
       refreshNow: function() {
@@ -115,10 +121,15 @@
       },
 
       update: function() {
-        this.core && this.core.updateReplica({
-          rid: this.rid,
-          callback: this.receive.bind(this)
-        }, this.data);
+        if (!this.core)
+          return;
+        var self = this;
+        var callback = function() {
+          self.isUpdating = false;
+          self.receive.apply(self, arguments);
+        }
+        this.isUpdating = true;
+        this.core.updateReplica({rid: this.rid, callback: callback}, this.data);
       },
 
       remove: function() {
