@@ -52,6 +52,7 @@
 
   <script>
     Polymer({
+      refreshInterval: 2000,
       observe: {
         'data.desiredState.replicas': 'maybeUpdate'
         // TODO: refresh on rid or core changes
@@ -60,6 +61,10 @@
       ready: function() {
         if (!this.data && this.rid)
           this.refresh();
+      },
+
+      detached: function() {
+        this.isDetached = true;
       },
 
       date: function(v) {
@@ -89,15 +94,18 @@
       receive: function(response) {
         this.data = response;
         this.rid = this.data.id;
+        !this.isDetached && this.refresh(this.refreshInterval);
       },
 
-      refresh: function() {
-        this.refreshJob = this.job(this.refreshJob, function(){
-          this.core && this.core.getReplica({
-            rid: this.rid,
-            callback: this.receive.bind(this)
-          });
-        }, 0);
+      refresh: function(delay) {
+        this.refreshJob = this.job(this.refreshJob, this.refreshNow, delay || 0);
+      },
+
+      refreshNow: function() {
+        this.core && this.core.getReplica({
+          rid: this.rid,
+          callback: this.receive.bind(this)
+        });
       },
 
       maybeUpdate: function(oldval, newval) {

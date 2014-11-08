@@ -8,19 +8,21 @@
       :host { display: block; }
     </style>
     <template repeat="{{item in data.items}}">
-      <kube-replc rid="{{item.id}}" data="{{item}}" core="{{core}}"></kube-replc>
+      <kube-replc rid="{{item.id}}" core="{{core}}"></kube-replc>
     </template>
   </template>
+  <script src="utils.js"></script>
   <script>
     Polymer({
-      data: null,
+      data: {items: []},
+      refreshInterval: 2000,
       observe: {
         'core': 'refresh'
       },
 
       ready: function() {
         this.isDetached = false;
-        this.refresh(!this.data ? 0 : 1000);
+        this.refresh(!this.data || !this.data.refreshed ? 0 : this.refreshInterval);
       },
 
       detached: function() {
@@ -29,8 +31,10 @@
 
       // TODO: handle errors
       receive: function(response, isError) {
-        this.data = response;
-        !this.isDetached && this.refresh(1000);
+        if (!compareArrays(this.data.items, response.items))
+          this.data = response;
+        this.data.refreshed = Date.now();
+        !this.isDetached && this.refresh(this.refreshInterval);
       },
 
       refresh: function(delay) {
